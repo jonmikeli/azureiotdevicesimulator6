@@ -30,6 +30,8 @@ Technical information:
 > An IoT Plug and Play version of the simulator has been released [here](https://github.com/jonmikeli/azureiotdevicesimulator5-pnp).
 > It allows to use DTDL v2 models and generate telemetries, properties and commands dynamically, according to the defined model.
 >
+> It will also be upgraded to .NET 6 and probably merged with the DPS version.
+>
 > _Which one to choose?_
 > The regular simulator is recommended in contexts where:
 >  - the device needs to send different types of messages.
