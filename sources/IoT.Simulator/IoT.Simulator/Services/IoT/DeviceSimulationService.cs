@@ -176,15 +176,10 @@ namespace IoT.Simulator.Services
                 while (true)
                 {
                     //Randomize data
-                    //messageString = await _telemetryMessagingService.GetRandomizedMessageAsync(deviceId, string.Empty);
-                    Random r = new Random(DateTime.Now.Millisecond);
-                    if (DateTime.Now.Second % 3 == 0)
-                        messageString = JsonConvert.SerializeObject(new { Voltage = (decimal)(r.Next(51, 70) / 10.0d), Status = -1 });
-                    else
-                        messageString = JsonConvert.SerializeObject(new { Voltage = (decimal)(r.Next(20, 50) / 10.0d), Status = 0 });
+                    messageString = await _telemetryMessagingService.GetRandomizedMessageAsync(deviceId, string.Empty);
 
                     var message = new Message(Encoding.UTF8.GetBytes(messageString));
-                    message.Properties.Add("project", "iotdemo");
+                    message.Properties.Add("messageType", "data");
 
                     // Add a custom application property to the message.
                     // An IoT hub can filter on these properties without access to the message body.
