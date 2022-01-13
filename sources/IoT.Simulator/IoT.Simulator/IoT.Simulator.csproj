@@ -18,6 +18,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\FileUpload\**" />
+    <EmbeddedResource Remove="Models\FileUpload\**" />
+    <None Remove="Models\FileUpload\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Services\SimulationApp.cs" />
   </ItemGroup>
 
@@ -35,10 +41,6 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\FileUpload\" />
   </ItemGroup>
 
   <ItemGroup>
