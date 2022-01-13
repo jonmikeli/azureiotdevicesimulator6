@@ -20,7 +20,7 @@ Example of uses:
 <br/>
 
 Technical information:
- - .NET 5
+ - .NET 6
  - Microsoft Azure IoT SDK (Device capabilities, including IoT Hub modules)
 
 <br/>
