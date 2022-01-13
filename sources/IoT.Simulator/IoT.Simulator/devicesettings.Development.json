@@ -1,0 +1,21 @@
+{
+  "connectionString": "HostName=iiot-hub.azure-devices.net;DeviceId=iotdemo1dev;SharedAccessKey=kkyzhcqpCTa9fslpQNbTk3T6sJeM+XHHpbwI/iHlkIM=",
+  "simulationSettings": {
+    "enableLatencyTests": false,
+    "latencyTestsFrecuency": 30,
+    "enableDevice": true,
+    "enableModules": false,
+    "enableTelemetryMessages": true,
+    "telemetryFrecuency": 10,
+    "enableErrorMessages": false,
+    "errorFrecuency": 20,
+    "enableCommissioningMessages": false,
+    "commissioningFrecuency": 30,
+    "enableTwinReportedMessages": false,
+    "twinReportedMessagesFrecuency": 60,
+    "enableReadingTwinProperties": false,
+    "enableC2DDirectMethods": true,
+    "enableC2DMessages": true,
+    "enableTwinPropertiesDesiredChangesNotifications": true
+  }
+}
