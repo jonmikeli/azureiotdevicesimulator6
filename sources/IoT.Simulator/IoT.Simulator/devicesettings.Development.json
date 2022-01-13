@@ -1,5 +1,5 @@
 {
-  "connectionString": "HostName=iiot-hub.azure-devices.net;DeviceId=iotdemo1dev;SharedAccessKey=kkyzhcqpCTa9fslpQNbTk3T6sJeM+XHHpbwI/iHlkIM=",
+  "connectionString": "HostName=t1-iots2-iot-iothub-dev.azure-devices.net;DeviceId=test1;SharedAccessKey=R0i1W/NY2gfdu33CvjfGqLcCUcJy4mKRKW8yHsMqQig=",
   "simulationSettings": {
     "enableLatencyTests": false,
     "latencyTestsFrecuency": 30,
