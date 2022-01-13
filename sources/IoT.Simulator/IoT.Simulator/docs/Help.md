@@ -4,7 +4,7 @@ This section describes the different artifacts of the solution and how they work
 
 ## Application
 The application consist of:
- - an application console (.NET 5)
+ - an application console (.NET 6)
  - configuration files:
    - [appsettings.json](####appsettings.json) (described below)
    - [devicesettings.json](####devicesettings.json) (described below)
@@ -124,11 +124,11 @@ The features of the application rely on two main components:
 <br/>
 
 ### Runing the simulator
- The simulator is a .NET 5 application.
+ The simulator is a .NET 6 application.
  
  To run the simulator, there are two alternatives:
-  1. running the simulator as a **.NET 5 application** (Console Application). Besides the general performance improvement and the cross-platform orientation, .NET 5 includes very interesting capabilities to package the applications. These capabilities can be especially useful in IoT solutions (upcoming publications will focus on this point).
-  1. running the *Docker container* (which contains in turn the .NET 5 binaries, packages and other required prerequisites)
+  1. running the simulator as a **.NET 6 application** (Console Application). Besides the general performance improvement and the cross-platform orientation, .NET 6 includes very interesting capabilities to package the applications. These capabilities can be especially useful in IoT solutions (upcoming publications will focus on this point).
+  1. running the *Docker container* (which contains in turn the .NET 6 binaries, packages and other required prerequisites)
   
  > ![NOTE]
  > 
