@@ -1,13 +1,11 @@
 ﻿using IoT.Simulator.Extensions;
 using IoT.Simulator.Models;
-using IoT.Simulator.Tools;
 
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace IoT.Simulator.Services
@@ -18,9 +16,13 @@ namespace IoT.Simulator.Services
         private ILogger _logger;
         private string _logPrefix;
         private string fileTemplatePath = @"./Messages/measureddata.json";
+        private ITimeSeriesSimulatorService _timeseriesSimulationService;
 
-        public ImpactivTelemetryMessageService(ILoggerFactory loggerFactory)
+        public ImpactivTelemetryMessageService(ITimeSeriesSimulatorService timeseriesSimulationService, ILoggerFactory loggerFactory)
         {
+            if (timeseriesSimulationService == null)
+                throw new ArgumentNullException(nameof(timeseriesSimulationService));
+
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
 
@@ -40,11 +42,23 @@ namespace IoT.Simulator.Services
 
         public async Task<string> GetRandomizedMessageAsync(string deviceId, string moduleId)
         {
-            throw new NotImplementedException();
+            string artifactId = string.IsNullOrEmpty(moduleId) ? deviceId : moduleId;
+            _logger.LogTrace($"{_logPrefix}::GetRandomizedMessageAsync::{artifactId}.");
+
+            ImpactivMessage data = MessageFactory.CreateMessage<ImpactivMessage>(artifactId);
+
+            //Randomize data
+            data = MessageFactory.RandomizeMessage<ImpactivMessage>(data, DateTime.UtcNow.AddMonths(-5), DateTime.UtcNow, 0, 20, 0, 5);
+            _logger.LogTrace($"{_logPrefix}::{artifactId}::Randomized data to update template's values before sending the message.");
+
+            if (data != null)
+                return JsonConvert.SerializeObject(data, Formatting.Indented);
+            else
+                return null;
         }
 
         public async Task<string> GetRandomizedMessageAsync(string deviceId, string moduleId, int peoplePresent)
-        {           
+        {
             string artifactId = string.IsNullOrEmpty(moduleId) ? deviceId : moduleId;
             _logger.LogTrace($"{_logPrefix}::GetRandomizedMessageAsync::{artifactId}.");
 
@@ -64,15 +78,9 @@ namespace IoT.Simulator.Services
     internal static class MessageFactory
     {
         static internal T CreateMessage<T>(string deviceId)
-            where T: ImpactivMessage
+            where T : ImpactivMessage, new()
         {
             return CreateMessage<T>(deviceId, DateTime.UtcNow);
-        }
-
-        static internal T CreateMessage<T>(string deviceId, DateTime date)
-            where T : ImpactivMessage
-        {
-            return CreateMessage<T>(deviceId, date);
         }
 
         static internal T CreateMessage<T>(string deviceId, DateTime date, int peopleIn = 0, int peopleOut = 0)

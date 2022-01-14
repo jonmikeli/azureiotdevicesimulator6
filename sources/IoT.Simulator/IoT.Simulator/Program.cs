@@ -2,10 +2,12 @@
 using IoT.Simulator.Services;
 using IoT.Simulator.Settings;
 using IoT.Simulator.Tools;
+
 using Microsoft.Azure.Devices.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using System;
 using System.IO;
 using System.Linq;
@@ -170,7 +172,8 @@ namespace IoT.Simulator
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
-            services.AddTransient<ITelemetryMessageService, SimpleTelemetryMessageService>();
+            services.AddSingleton<ITimeSeriesSimulatorService, TimeSeriesSimulatorService>();
+            services.AddTransient<ITelemetryMessageService, ImpactivTelemetryMessageService>();
             services.AddTransient<IErrorMessageService, SimpleErrorMessageService>();
             services.AddTransient<ICommissioningMessageService, SimpleCommissioningMessageService>();
         }
