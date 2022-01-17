@@ -172,8 +172,8 @@ namespace IoT.Simulator
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
-            services.AddSingleton<ITimeSeriesSimulatorService, TimeSeriesSimulatorService>();
-            services.AddTransient<ITelemetryMessageService, ImpactivTelemetryMessageService>();
+            services.AddTransient<ITimeSeriesSimulatorService, TimeSeriesSimulatorService>();
+            services.AddSingleton<ITelemetryMessageService, ImpactivTelemetryMessageService>();
             services.AddTransient<IErrorMessageService, SimpleErrorMessageService>();
             services.AddTransient<ICommissioningMessageService, SimpleCommissioningMessageService>();
         }

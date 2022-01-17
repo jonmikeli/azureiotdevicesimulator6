@@ -10,13 +10,12 @@ using System.Threading.Tasks;
 
 namespace IoT.Simulator.Services
 {
-    //https://dejanstojanovic.net/aspnet/2018/december/registering-multiple-implementations-of-the-same-interface-in-aspnet-core/
     public class ImpactivTelemetryMessageService : ITelemetryMessageService
     {
         private ILogger _logger;
         private string _logPrefix;
-        private string fileTemplatePath = @"./Messages/measureddata.json";
         private ITimeSeriesSimulatorService _timeseriesSimulationService;
+        private ImpactivMessage _lastCreatedItem;
 
         public ImpactivTelemetryMessageService(ITimeSeriesSimulatorService timeseriesSimulationService, ILoggerFactory loggerFactory)
         {
@@ -25,6 +24,8 @@ namespace IoT.Simulator.Services
 
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
+
+            _timeseriesSimulationService = timeseriesSimulationService;
 
             _logger = loggerFactory.CreateLogger<SimpleTelemetryMessageService>();
             _logPrefix = "ImpactivTelemetryMessageService".BuildLogPrefix();
@@ -48,16 +49,47 @@ namespace IoT.Simulator.Services
             ImpactivMessage data = MessageFactory.CreateMessage<ImpactivMessage>(artifactId);
 
             //Randomize data
-            data = MessageFactory.RandomizeMessage<ImpactivMessage>(data, DateTime.UtcNow.AddMonths(-5), DateTime.UtcNow, 0, 20, 0, 5);
+            if (_lastCreatedItem == null)
+                _lastCreatedItem = MessageFactory.RandomizeMessage<ImpactivMessage>(data, DateTime.UtcNow.AddMonths(-5), DateTime.UtcNow, 0, 20, 0, 5);
+            else
+            {
+
+                TimeSeriesNumericDataItem newDataItemIn = _timeseriesSimulationService.CreateTimeSeriesNumericData(
+                        new TimeSeriesNumericDataItem
+                        {
+                            Date = _lastCreatedItem.ISOTime,
+                            Value = _lastCreatedItem.CounterPeopleIn
+                        },
+                        _lastCreatedItem.ISOTime.AddHours(1),
+                            0,
+                            10
+                            );
+
+                TimeSeriesNumericDataItem newDataItemOut = _timeseriesSimulationService.CreateTimeSeriesNumericData(
+                    new TimeSeriesNumericDataItem
+                    {
+                        Date = _lastCreatedItem.ISOTime,
+                        Value = _lastCreatedItem.CounterPeopleOut
+                    },
+                    _lastCreatedItem.ISOTime.AddHours(1),
+                        0,
+                        _lastCreatedItem.CounterPeopleIn
+                        );
+
+                _lastCreatedItem.CounterPeopleIn = newDataItemIn.Value;
+                _lastCreatedItem.CounterPeopleOut = newDataItemOut.Value;
+                _lastCreatedItem.ISOTime = newDataItemOut.Date.ToUniversalTime();
+            }
+
             _logger.LogTrace($"{_logPrefix}::{artifactId}::Randomized data to update template's values before sending the message.");
 
-            if (data != null)
-                return JsonConvert.SerializeObject(data, Formatting.Indented);
+            if (_lastCreatedItem != null)
+                return JsonConvert.SerializeObject(_lastCreatedItem, Formatting.Indented);
             else
                 return null;
         }
 
-        public async Task<string> GetRandomizedMessageAsync(string deviceId, string moduleId, int peoplePresent)
+        public async Task<string> GetRandomizedMessageAsync(string deviceId, string moduleId, Direction direction)
         {
             string artifactId = string.IsNullOrEmpty(moduleId) ? deviceId : moduleId;
             _logger.LogTrace($"{_logPrefix}::GetRandomizedMessageAsync::{artifactId}.");
@@ -65,14 +97,57 @@ namespace IoT.Simulator.Services
             ImpactivMessage data = MessageFactory.CreateMessage<ImpactivMessage>(artifactId);
 
             //Randomize data
-            data = MessageFactory.RandomizeMessage<ImpactivMessage>(data, DateTime.UtcNow.AddMonths(-5), DateTime.UtcNow, 0, 10, 0, peoplePresent);
+            if (_lastCreatedItem == null)
+                _lastCreatedItem = MessageFactory.RandomizeMessage<ImpactivMessage>(data, DateTime.UtcNow.AddMonths(-5), DateTime.UtcNow, 0, 20, 0, 0);
+
+            if (direction == Direction.In)
+            {
+                TimeSeriesNumericDataItem newDataItemIn = _timeseriesSimulationService.CreateTimeSeriesNumericData(
+                        new TimeSeriesNumericDataItem
+                        {
+                            Date = _lastCreatedItem.ISOTime,
+                            Value = _lastCreatedItem.CounterPeopleIn
+                        },
+                        _lastCreatedItem.ISOTime.AddHours(1),
+                            1,
+                            10
+                            );
+
+                _lastCreatedItem.CounterPeopleIn = newDataItemIn.Value;
+                _lastCreatedItem.CounterPeopleOut = 0;
+                _lastCreatedItem.ISOTime = newDataItemIn.Date.ToUniversalTime();
+            }
+            else if (direction == Direction.Out)
+            {
+                TimeSeriesNumericDataItem newDataItemOut = _timeseriesSimulationService.CreateTimeSeriesNumericData(
+                    new TimeSeriesNumericDataItem
+                    {
+                        Date = _lastCreatedItem.ISOTime,
+                        Value = _lastCreatedItem.CounterPeopleOut
+                    },
+                    _lastCreatedItem.ISOTime.AddHours(1),
+                        1,
+                        2
+                        );
+
+                _lastCreatedItem.CounterPeopleIn = 0;
+                _lastCreatedItem.CounterPeopleOut = newDataItemOut.Value;
+                _lastCreatedItem.ISOTime = newDataItemOut.Date.ToUniversalTime();
+            }
+
             _logger.LogTrace($"{_logPrefix}::{artifactId}::Randomized data to update template's values before sending the message.");
 
-            if (data != null)
-                return JsonConvert.SerializeObject(data, Formatting.Indented);
+            if (_lastCreatedItem != null)
+                return JsonConvert.SerializeObject(_lastCreatedItem, Formatting.Indented);
             else
                 return null;
         }
+    }
+
+    public enum Direction
+    {
+        In,
+        Out
     }
 
     internal static class MessageFactory
@@ -106,6 +181,7 @@ namespace IoT.Simulator.Services
             Random r = new Random(DateTime.Now.Millisecond);
 
             data.Time = RandomDate(r, dateStart, dateEnd);
+            data.ISOTime = data.Time;
             data.CounterPeopleIn = r.Next(inMin, inMax);
             data.CounterPeopleOut = r.Next(outMin, outMax);
 

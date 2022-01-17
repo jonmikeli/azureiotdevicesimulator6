@@ -12,6 +12,8 @@ namespace IoT.Simulator.Settings
 
         [JsonProperty("enableDevice")]
         public bool EnableDevice { get; set; }
+        [JsonProperty("direction")]
+        public Direction Direction { get; set; }
         [JsonProperty("enableModules")]
         public bool EnableModules { get; set; }
 
@@ -23,4 +25,11 @@ namespace IoT.Simulator.Settings
         [JsonProperty("fileUploadStorage")]
         public BlobStorageSettings FileUploadStorage { get; set; }
     }
+
+    public enum Direction
+    {
+        In,
+        Out
+    }
 }
+

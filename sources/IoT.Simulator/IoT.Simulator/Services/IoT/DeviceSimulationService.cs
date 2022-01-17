@@ -176,7 +176,10 @@ namespace IoT.Simulator.Services
                 while (true)
                 {
                     //Randomize data
-                    messageString = await _telemetryMessagingService.GetRandomizedMessageAsync(deviceId, string.Empty);                    
+                    if (_simulationSettings.Direction == Settings.Direction.In)
+                        messageString = await _telemetryMessagingService.GetRandomizedMessageAsync(deviceId, string.Empty, Direction.In);                    
+                    else if (_simulationSettings.Direction == Settings.Direction.Out) 
+                        messageString = await _telemetryMessagingService.GetRandomizedMessageAsync(deviceId, string.Empty, Direction.Out);
 
                     var message = new Message(Encoding.UTF8.GetBytes(messageString));
                     message.Properties.Add("project", "impactiv");

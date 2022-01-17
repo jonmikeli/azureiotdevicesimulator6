@@ -4,6 +4,7 @@
     "enableLatencyTests": false,
     "latencyTestsFrecuency": 30,
     "enableDevice": true,
+    "direction": "in",
     "enableModules": false,
     "enableTelemetryMessages": false,
     "telemetryFrecuency": 10,

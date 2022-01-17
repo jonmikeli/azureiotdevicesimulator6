@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace IoT.Simulator.Services
 {
-    //https://dejanstojanovic.net/aspnet/2018/december/registering-multiple-implementations-of-the-same-interface-in-aspnet-core/
     public class SimpleTelemetryMessageService : ITelemetryMessageService
     {
         private ILogger _logger;
@@ -61,6 +60,11 @@ namespace IoT.Simulator.Services
             _logger.LogTrace($"{logPrefix}::{artifactId}::Randomized data to update template's values before sending the message.");
 
             return messageString;
+        }
+
+        public async Task<string> GetRandomizedMessageAsync(string deviceId, string moduleId, Direction direction)
+        {
+            return await GetRandomizedMessageAsync(deviceId, moduleId);
         }
     }
 }
